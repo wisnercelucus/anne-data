@@ -50,7 +50,25 @@ def rename_intervals(starter, endPos, date, month_number):
     
     
     
+def lag_finder(temperature_list, arvi_list, sr):
+    import numpy as np
+    from scipy import signal
+    import matplotlib.pyplot as plt
     
+    n = len(temperature_list)
+
+    corr = signal.correlate(arvi_list, temperature_list, mode='same') / np.sqrt(signal.correlate(temperature_list, temperature_list, mode='same')[int(n/2)] * signal.correlate(arvi_list, arvi_list, mode='same')[int(n/2)])
+
+    delay_arr = np.linspace(-0.5*n/sr, 0.5*n/sr, n)
+    delay = delay_arr[np.argmax(corr)]
+    print('arvi_list is ' + str(delay) + ' behind temperature_list')
+
+    plt.figure()
+    plt.plot(delay_arr, corr)
+    plt.title('Lag: ' + str(np.round(delay, 3)) + ' s')
+    plt.xlabel('Lag')
+    plt.ylabel('Correlation coefficient')
+    plt.show()
     
     
     
